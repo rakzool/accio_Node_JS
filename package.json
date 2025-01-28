@@ -1,0 +1,14 @@
+{
+  "name": "file-system",
+  "version": "1.0.0",
+  "description": "basic file operations",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "author": "Rahul",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
