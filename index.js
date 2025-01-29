@@ -1,41 +1,51 @@
-const fs = require("fs");
-const path = require("path");
+const {listFiles} = require("./modules/ListFiles");
+const {readFile} = require("./modules/ReadFiles");
+const {changeDirectory} = require("./modules/ChangeDirectory");
+const {writeFile} = require("./modules/WriteFile");
 
-const content = "Hello i am learning node js and learning this is fun";
-const resourcePath = "./resources";
-let fileData;
+const readline = require("readline");
 
-fs.writeFile("./resources/demo.txt",content,(err) =>{
-  if(err){
-    console.error("unable to write to file");
-  }
-
-  console.log("File Written Successfully !!!");
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
 });
 
+let currentDir = process.cwd();
 
-fs.readFile(path.join(resourcePath,"demo.txt"),'utf-8',(err,data)=>{
-    if(err){
-        console.error("unable to Read to file");
+console.log(`Current Directory : ${currentDir}`);
+
+function prompt() {
+  rl.question('Enter command (ls, cat <file> , write <path> <file> <content>,cd <dir>, cat <file>,exit) : ', (input) => {
+    const args = input.split(' ');
+    const command = args[0];
+
+    switch(command) {
+      case 'ls':
+        listFiles(currentDir);
+        break;
+      case 'cat':
+        if(args[1]) readFile(currentDir, args[1]);
+        else console.log("please specify a file to read");
+        break;
+      case 'write':
+        if(args[1] && args[2] && args[3]) writeFile(args[1],args[2], args.slice(3).join(' '));
+        else console.log('Usage: write <path> <file> <content>');
+        break;
+      case 'cd':
+        if(args[1]) currentDir = changeDirectory(currentDir,args[1]);
+        else console.log('Please specify a directory');
+        break;
+      case 'exit':
+        rl.close();
+        return;
+      default:
+        console.log("Unknown command");
+
     }
+    prompt();
+  });
 
-    console.log(data);
-})
+}
 
-const appendData = "\n And also i like football";
 
-// fs.appendFile(path.join(resourcePath,"demo.txt"),appendData,(err)=>{
-//     if(err){
-//         console.error("unable to Append to file");
-//       }
-
-//       console.log("File Modified Successfully !!!");
-// });
-
-fs.unlink(path.join(resourcePath,"demo.txt"),(err)=>{
-    if(err){
-        console.error("unable to Delete to file");
-      }
-
-      console.log("File Deleted Successfully !!!");
-})
+prompt();
